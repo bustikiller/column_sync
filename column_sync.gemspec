@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.summary = "A ruby gem to sync values between columns using Postgres and Rails"
   spec.homepage = "https://github.com/bustikiller/column_sync"
-  spec.required_ruby_version = ">= 2.6.0"
+  spec.required_ruby_version = ">= 3.0.0"
 
   spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
 
@@ -29,9 +29,8 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "activerecord", "> 6.0.0"
-  spec.add_dependency "fx", "~> 0.8.0"
-  spec.add_dependency "pg"
-
+  spec.add_development_dependency "fx", "~> 0.8.0"
+  spec.add_development_dependency "pg", "~> 1.5.4"
+  spec.add_development_dependency "rails", ">= 6.0.0"
   spec.add_development_dependency "rubocop"
 end
