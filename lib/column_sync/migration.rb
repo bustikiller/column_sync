@@ -3,6 +3,9 @@
 module ColumnSync
   module Migration
     def sync_columns(columns)
+      FileUtils.mkdir_p("db/functions")
+      FileUtils.mkdir_p("db/triggers")
+
       service = Service.new(columns)
 
       each_function(service) { |name| create_function(name) }
