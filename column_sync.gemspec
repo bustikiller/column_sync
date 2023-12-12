@@ -12,8 +12,6 @@ Gem::Specification.new do |spec|
   spec.homepage = "https://github.com/bustikiller/column_sync"
   spec.required_ruby_version = ">= 3.0.0"
 
-  spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
-
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/bustikiller/column_sync"
   spec.metadata["changelog_uri"] = "https://github.com/bustikiller/column_sync/blob/main/CHANGELOG.md"
