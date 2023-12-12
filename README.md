@@ -1,31 +1,43 @@
 # ColumnSync
 
-TODO: Delete this and the text below, and describe your gem
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/column_sync`. To experiment with that code, run `bin/console` for an interactive prompt.
+Keeping in sync columns in different tables is a pretty common step during database refactorings. The
+`column_sync` gem provides ActiveRecord migration helpers to facilitate the sync of data between
+columns.
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
-
 Install the gem and add to the application's Gemfile by executing:
 
-    $ bundle add UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
+    $ bundle add column_sync
 
 If bundler is not being used to manage dependencies, install the gem by executing:
 
-    $ gem install UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
+    $ gem install column_sync
 
 ## Usage
 
-TODO: Write usage instructions here
+The following snippet should be used as a migration template:
 
-## Development
+```ruby
+class SyncColumns < ActiveRecord::Migration[7.1]
+  def up
+    sync_columns(Subscription => :country_code, Company => :country)
+  end
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+  def down
+    unsync_columns(Subscription => :country_code, Company => :country)
+  end
+end
+```
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+The migration above generates the functions and triggers needed to keep `subscriptions.country_code` in sync with `companies.country`.
 
-## Contributing
+## Limitations
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/column_sync.
+- Each `sync_columns` statement can only sync a pair of columns. If the same column needs to be synchronized across multiple
+  tables, multiple such statements will be needed.
+- The gem expects a `has_one` - `belongs_to` association between the models involved. It uses Rails reflections to understand
+  the table names and column names involved.
+- The columns involved in the migration will be kept in sync via database triggers executed on row update.
+  It assumes the records are initially in sync, so it does **not** automatically sync values using any of the two columns involved.
+- It also does not sync values when a row is created, only when it is modified.
