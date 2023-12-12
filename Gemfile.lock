@@ -2,6 +2,9 @@ PATH
   remote: .
   specs:
     column_sync (0.1.0)
+      fx (~> 0.8.0)
+      pg (~> 1.5.4)
+      rails (>= 6.0.0)
 
 GEM
   remote: https://rubygems.org/
@@ -213,9 +216,6 @@ PLATFORMS
 
 DEPENDENCIES
   column_sync!
-  fx (~> 0.8.0)
-  pg (~> 1.5.4)
-  rails (>= 6.0.0)
   rubocop
 
 BUNDLED WITH
