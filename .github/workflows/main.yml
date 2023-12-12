@@ -1,12 +1,5 @@
 name: Ruby
-
-on:
-  push:
-    branches:
-      - master
-
-  pull_request:
-
+on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,8 +7,18 @@ jobs:
     strategy:
       matrix:
         ruby:
-          - '3.2.0'
-
+          - '3.0.5'
+          - '3.1.4'
+          - '3.2.2'
+    services:
+      postgres:
+        image: postgres:11
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
     - uses: actions/checkout@v3
     - name: Set up Ruby
@@ -23,5 +26,14 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
-    - name: Run the default task
-      run: bundle exec rake
+    - name: Run tests
+      run: |
+        cd spec/support/dummy/
+        bundle install
+        cp config/database.yml.github-actions config/database.yml
+        rake db:create db:schema:load
+        rspec
+      env:
+        RAILS_ENV: test
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
