@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_12_10_114149) do
+ActiveRecord::Schema[7.1].define(version: 2023_12_10_132345) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -37,4 +37,42 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_10_114149) do
   end
 
   add_foreign_key "subscriptions", "companies"
+  create_function :column_sync_subscriptions_country_code_on_companies_update, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.column_sync_subscriptions_country_code_on_companies_update()
+       RETURNS trigger
+       LANGUAGE plpgsql
+      AS $function$
+      BEGIN
+      IF NEW.country IS DISTINCT FROM OLD.country THEN
+        UPDATE subscriptions
+        SET country_code = NEW.country
+        WHERE company_id = NEW.id;
+      END IF;
+      RETURN NEW;
+      END;
+      $function$
+  SQL
+  create_function :column_sync_companies_country_on_subscriptions_update, sql_definition: <<-'SQL'
+      CREATE OR REPLACE FUNCTION public.column_sync_companies_country_on_subscriptions_update()
+       RETURNS trigger
+       LANGUAGE plpgsql
+      AS $function$
+      BEGIN
+      IF NEW.country_code IS DISTINCT FROM OLD.country_code THEN
+        UPDATE companies
+        SET country = NEW.country_code
+        WHERE id = NEW.company_id;
+      END IF;
+      RETURN NEW;
+      END;
+      $function$
+  SQL
+
+
+  create_trigger :column_sync_subscriptions_country_code_on_companies_update, sql_definition: <<-SQL
+      CREATE TRIGGER column_sync_subscriptions_country_code_on_companies_update AFTER UPDATE ON public.companies FOR EACH ROW EXECUTE FUNCTION column_sync_subscriptions_country_code_on_companies_update()
+  SQL
+  create_trigger :column_sync_companies_country_on_subscriptions_update, sql_definition: <<-SQL
+      CREATE TRIGGER column_sync_companies_country_on_subscriptions_update AFTER UPDATE ON public.subscriptions FOR EACH ROW EXECUTE FUNCTION column_sync_companies_country_on_subscriptions_update()
+  SQL
 end

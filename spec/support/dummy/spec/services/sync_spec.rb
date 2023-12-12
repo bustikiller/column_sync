@@ -24,4 +24,18 @@ RSpec.describe "column synchronization" do
     expect(Subscription.second.country_code).to eq "AF"
     expect(Subscription.third.country_code).to eq "AD"
   end
+
+  it "syncs from subscription to company" do
+    expect(Company.first.country).to eq "US"
+    expect(Company.second.country).to eq "MX"
+    expect(Company.third.country).to eq "CA"
+
+    Subscription.first.update!(country_code: "ES")
+    Subscription.second.update!(country_code: "AF")
+    Subscription.third.update!(country_code: "AD")
+
+    expect(Company.first.country).to eq "ES"
+    expect(Company.second.country).to eq "AF"
+    expect(Company.third.country).to eq "AD"
+  end
 end
