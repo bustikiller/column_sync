@@ -35,7 +35,7 @@ jobs:
         cd spec/support/dummy/
         bundle install
         cp config/database.yml.github-actions config/database.yml
-        rake db:create db:schema:load
+        rake db:create db:migrate
         rspec
       env:
         RAILS_ENV: test

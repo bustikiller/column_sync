@@ -2,9 +2,9 @@ PATH
   remote: ../../..
   specs:
     column_sync (0.1.0)
-      activerecord (> 6.0.0)
       fx (~> 0.8.0)
-      pg
+      pg (~> 1.5.4)
+      rails (>= 6.0.0)
 
 GEM
   remote: https://rubygems.org/
