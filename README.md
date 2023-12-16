@@ -52,6 +52,41 @@ class Subscription < ApplicationRecord
 end
 ```
 
+## Example
+
+Given the following scenario:
+
+```ruby
+Company.create!(country: "es")
+Subscription.create!(country_code: "es", company: Company.first)
+```
+
+Changes are reflected in memory when the value is modified:
+
+```ruby
+company = Company.first
+company.country = "fr"
+company.subscription.country_code
+# => "fr"
+
+company.subscription.country_code = "ca"
+company.country
+# => "ca"
+```
+
+Changes are also reflected in the DB when the value is persisted:
+
+```ruby
+company = Company.first
+company.update(country: "it")
+company.subscription.country_code
+# => "it"
+
+company.subscription.update(country_code: "ma")
+company.country
+# => "ma" 
+```
+
 ## Limitations
 
 - Each `sync_columns` statement can only sync a pair of columns. If the same column needs to be synchronized across multiple
