@@ -15,6 +15,7 @@ group :development, :test do
   gem "column_sync", path: "../../../../column_sync"
   gem "debug", platforms: %i[mri windows]
   gem "rspec-rails", "~> 6.1.0"
+  gem "pry"
 end
 
 group :development do

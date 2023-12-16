@@ -32,12 +32,32 @@ end
 
 The migration above generates the functions and triggers needed to keep `subscriptions.country_code` in sync with `companies.country`.
 
+You also need to update your models to reflect the syncroniaztion between their columns:
+
+```ruby
+class Company < ApplicationRecord
+  include ColumnSync::Model
+  
+  has_one :subscription
+
+  sync_column :country, to: :subscription, column: :country_code
+end
+
+class Subscription < ApplicationRecord
+  include ColumnSync::Model
+
+  belongs_to :company
+
+  sync_column :country_code, to: :company, column: :country
+end
+```
+
 ## Limitations
 
 - Each `sync_columns` statement can only sync a pair of columns. If the same column needs to be synchronized across multiple
   tables, multiple such statements will be needed.
 - The gem expects a `has_one` - `belongs_to` association between the models involved. It uses Rails reflections to understand
   the table names and column names involved.
-- The columns involved in the migration will be kept in sync via database triggers executed on row update.
-  It assumes the records are initially in sync, so it does **not** automatically sync values using any of the two columns involved.
+- It is assumed that the records are initially in sync, so it does **not** automatically sync values using any of the two 
+  columns involved.
 - It also does not sync values when a row is created, only when it is modified.
