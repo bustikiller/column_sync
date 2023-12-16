@@ -24,7 +24,7 @@ module ColumnSync
 
           current_value = object.attributes[sync[:column].to_s]
 
-          object.public_send("#{sync[:column]}=", value) if current_value != value
+          object.public_send("#{sync[:column]}=", value) if current_value.to_s != value.to_s
         end
       end
     end
