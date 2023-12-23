@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    column_sync (0.1.0)
+    column_sync (0.2.0)
       fx (~> 0.8.0)
       pg (~> 1.5.4)
       rails (>= 6.0.0)
